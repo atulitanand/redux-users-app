@@ -9,5 +9,21 @@ I am not using the second way because it adds additional compelexiy of the middl
 
 ## Main concept behind 2nd method
 
-Since state of the application changes everytime the state tree changes. I can dispatch `onCompletion` action inside the `asyncLoading` action inside the `reducer`.
+Since state of the application changes everytime the state tree changes. I can dispatch `onCompletion` action in the callback`asyncLoading` action which is inside the `reducer`.
+
+```js
+const reducer = (state = initialState, action) => {
+    let { users } = state;
+    if (action.type === DONE) {
+        console.log('-updated-')
+        return { ...state, loading: false}
+    } else if (action.type === LOAD_USER) {
+        loadUser(...).then((user) => {
+            users.push(user)
+        }).then(() => store.dispatch(done()));
+        return { ...state, loading: true }
+    }
+}
+```
+
 And so everytime I ask for `asyncAction`.It can set `isLoading field to true` and after a while when the promise fullfils I can again set the `loading to false` which will return us the new state of the tree.
